@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -25,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HomeFragment extends Fragment  implements View.OnClickListener{
 
@@ -48,33 +52,35 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
             case R.id.btn_blue:
 
                 Log.i("click", "el boton blue funciona");
-                sendWwarningToFirebase("warning_azul");
+                //sendWwarningToFirebase("warning_azul");
                 break;
 
             case R.id.btn_green:
 
                 Log.i("click", "el boton  green funciona");
-                sendWwarningToFirebase("warning_verde");
+                //sendWwarningToFirebase("warning_verde");
                 break;
 
             case R.id.btn_yellow:
 
                 Log.i("click", "el boton yellow funciona");
-                sendWwarningToFirebase("warning_amarillo");
+                //sendWwarningToFirebase("warning_amarillo");
                 break;
 
             case R.id.btn_red:
 
                 Log.i("click", "el boton red funciona");
-                sendWwarningToFirebase("warning_rojo");
+                //sendWwarningToFirebase("warning_rojo");
+
                 break;
 
             default:
-                Log.i("click", "id no registrado en onclick");
+                Log.i("click", "somos los pawerangers !! ;)");
 
 
         }
     }
+
 
     public static String timeDisplay() {
         Calendar calendar = Calendar.getInstance();
@@ -135,4 +141,6 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
 
         reffDevices.setValue(deviceManager);
     }
+
+
 }
