@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
                 break;
 
             default:
-                Log.i("click", "somos los pawerangers !! ;)");
+                Log.i("click", "somos los powerangers !! ;)");
 
 
         }
