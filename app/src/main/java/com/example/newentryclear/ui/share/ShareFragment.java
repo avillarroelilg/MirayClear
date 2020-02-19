@@ -1,6 +1,11 @@
 package com.example.newentryclear.ui.share;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +19,10 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.newentryclear.R;
 
-public class ShareFragment extends Fragment {
+import java.util.Random;
 
+public class ShareFragment extends Fragment implements View.OnClickListener {
+    TextView cajaHex;
     private ShareViewModel shareViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,6 +37,43 @@ public class ShareFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        cajaHex = root.findViewById(R.id.txtHex);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        cajaHex.setText(sharedPreferences.getString("tabletID", "0"));
+        root.findViewById(R.id.btnHex).setOnClickListener(this::onClick);
         return root;
     }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnHex:
+
+                Log.i("click", "el boton blue funciona");
+                crearHexadecimal();
+                break;
+
+            default:
+                Log.i("click", "id no registrado en onclick");
+                break;
+
+        }
+    }
+
+    private void crearHexadecimal() {
+        Random rand = new Random();
+        int myRandomNumber = rand.nextInt(0xfff) + 0xfff; // Generates a random number between 0x10 and 0x20
+        //System.out.printf("%x\n",myRandomNumber); // Prints it in hex, such as "0x14" or....
+        String result = Integer.toHexString(myRandomNumber); // Random hex number in result
+        cajaHex.setText(result);
+
+        SharedPreferences sharedPref  = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString( "tabletID",result);
+        editor.commit();
+
+
+    }
+
 }
