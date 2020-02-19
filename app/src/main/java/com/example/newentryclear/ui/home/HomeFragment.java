@@ -32,6 +32,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static androidx.core.content.ContextCompat.getSystemService;
+import static com.example.newentryclear.UtilityClass.timeDisplay;
+import static com.example.newentryclear.UtilityClass.timeDisplayDay;
+import static com.example.newentryclear.UtilityClass.timeDisplayHours;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -87,26 +90,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    public static String timeDisplay() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss dd-MM-yyy");
-        String currentDate = format.format(calendar.getTime());
-        return currentDate;
-    }
-
-    public static String timeDisplayDay() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyy");
-        String currentDate = format.format(calendar.getTime());
-        return currentDate;
-    }
-
-    public static String timeDisplayHours() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        String currentDate = format.format(calendar.getTime());
-        return currentDate;
-    }
 
     DatabaseReference reff;
     DatabaseReference reffDevices;

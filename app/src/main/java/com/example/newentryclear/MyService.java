@@ -46,16 +46,18 @@ public class MyService extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            //antes de empezar obtener siertos requerimientos
             dateFormat = new SimpleDateFormat("HH:mm:ss");
             cent = true;
         }
 
         protected String doInBackground(String... params) {
+            //codigo a ejecutar
             while (cent){
                 date = dateFormat.format(new Date());
                 try {
                     publishProgress(date);
-                    // Stop 5s
+                    // Stop 5s  cada cuando tiempo queremos que lo haga
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -65,6 +67,7 @@ public class MyService extends Service {
         }
         @Override
         protected void onProgressUpdate(String... values) {
+            //aqui es cuando ya quieres pasarle los datos a ...
             Toast.makeText(getApplicationContext(), "Hora actual: " + values[0], Toast.LENGTH_SHORT).show();
         }
 
