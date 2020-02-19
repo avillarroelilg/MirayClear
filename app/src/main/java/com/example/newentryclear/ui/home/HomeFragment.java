@@ -1,6 +1,7 @@
 package com.example.newentryclear.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,6 +22,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.newentryclear.AlarmasMedic;
 import com.example.newentryclear.BatteryWarnings;
 import com.example.newentryclear.DeviceManager;
+import com.example.newentryclear.MainActivity;
+import com.example.newentryclear.MyService;
 import com.example.newentryclear.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,7 +33,7 @@ import java.util.Calendar;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
-public class HomeFragment extends Fragment  implements View.OnClickListener{
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private HomeViewModel homeViewModel;
 
@@ -43,14 +46,22 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
         root.findViewById(R.id.btn_green).setOnClickListener(this::onClick);
         root.findViewById(R.id.btn_yellow).setOnClickListener(this::onClick);
         root.findViewById(R.id.btn_red).setOnClickListener(this::onClick);
+
         return root;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_blue:
 
+            case R.id.btn_red:
+                getActivity().startService(new Intent(getActivity(), MyService.class));
+                Log.i("click", "el boton red funciona");
+                //sendWwarningToFirebase("warning_rojo");
+
+                break;
+            case R.id.btn_blue:
+                getActivity().stopService(new Intent(getActivity(), MyService.class));
                 Log.i("click", "el boton blue funciona");
                 //sendWwarningToFirebase("warning_azul");
                 break;
@@ -67,12 +78,6 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
                 //sendWwarningToFirebase("warning_amarillo");
                 break;
 
-            case R.id.btn_red:
-
-                Log.i("click", "el boton red funciona");
-                //sendWwarningToFirebase("warning_rojo");
-
-                break;
 
             default:
                 Log.i("click", "somos los powerangers !! ;)");
@@ -113,6 +118,7 @@ public class HomeFragment extends Fragment  implements View.OnClickListener{
 
     String tabletName;
     Integer idDevice;
+
     private void sendWwarningToFirebase(String typeOfWarning) {
 
         SharedPreferences prefs = getContext().getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
