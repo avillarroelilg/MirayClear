@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "918652158696",
+    "firebase_url": "https://bdmiray-299d8.firebaseio.com",
+    "project_id": "bdmiray-299d8",
+    "storage_bucket": "bdmiray-299d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918652158696:android:b430a5e50a9d63672b7f5d",
+        "android_client_info": {
+          "package_name": "com.example.newentryclear"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "918652158696-ngefnuith47hl2rnv8klt4f7mduppfe6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGMj2oSxcaKxJ8P5aBdL_sz2PDR3GqBak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "918652158696-ngefnuith47hl2rnv8klt4f7mduppfe6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
