@@ -12,7 +12,7 @@
         android:layout_height="45dp" />
 
     <EditText
-        android:id="@+id/edt_nameUser"
+        android:id="@+id/edit_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -24,7 +24,7 @@
         android:layout_height="15dp" />
 
     <EditText
-        android:id="@+id/edt_passwortUser"
+        android:id="@+id/edit_passwordUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
