@@ -84,12 +84,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             default:
                 Log.i("click", "somos los powerangers !! ;)");
-
-
         }
     }
-
-
 
     DatabaseReference reff;
     DatabaseReference reffDevices;
@@ -130,6 +126,4 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         reffDevices.setValue(deviceManager);
     }
-
-
 }
