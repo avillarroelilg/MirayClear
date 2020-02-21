@@ -1,4 +1,4 @@
-package com.example.newentryclear.ui.gallery;
+package com.example.newentryclear.ui.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +10,7 @@ public class GalleryViewModel extends ViewModel {
 
     public GalleryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is login fragment");
     }
 
     public LiveData<String> getText() {

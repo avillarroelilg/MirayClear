@@ -5,13 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 
+import com.example.newentryclear.ui.hexadecimalgen.HexaFragment;
+import com.example.newentryclear.ui.home.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -20,6 +25,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -28,8 +35,33 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import static com.example.newentryclear.ui.home.HomeFragment.isPlugged;
+import static com.example.newentryclear.ui.home.HomeFragment.timeDisplay;
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
+
+    static ImageView imageView;
+    static TextView headerText;
+    static TextView subheaderText;
+    static SharedPreferences prefs;
+    Integer userID;
+    private HomeViewModel homeViewModel;
+    DatabaseReference reff;
+    DatabaseReference reffDevices;
+    DatabaseReference reffDevicesWar;
+
+    AlarmasMedic alarmasMedic;
+    DeviceManager deviceManager;
+    BatteryWarnings batteryWarnings;
+
+    String tabletName;
+    String username;
+    String idDevice;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -40,11 +72,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        alarmasMedic = new AlarmasMedic();
+        deviceManager = new DeviceManager();
+        batteryWarnings = new BatteryWarnings();
+
 //batery and fix screem
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         registerReceiver(LowBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
 // #####
-
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -52,15 +87,98 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, 
+                R.id.nav_home, R.id.nav_gallery,
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        View header = navigationView.getHeaderView(0);
+        imageView = (ImageView) header.findViewById(R.id.imageLog);
+        headerText = (TextView) header.findViewById(R.id.navHeader);
+        subheaderText = (TextView) header.findViewById(R.id.navHeaderSub);
+        prefs = this.getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
+
+    }
+
+    public void changeStatus(String status) {
+        SharedPreferences prefs = this.getSharedPreferences(
+                "com.example.newentry", Context.MODE_PRIVATE);
+        if (isPlugged(this)) {
+            prefs.edit().putString("chargerConnected", "Conectado").apply();
+        } else if (!isPlugged(this)) {
+            prefs.edit().putString("chargerConnected", "Desconectado").apply();
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        tabletName = sharedPreferences.getString("tabletName", "Tablet B1");
+        idDevice = sharedPreferences.getString("tabletID", "0");
+
+        String latestAction = sharedPreferences.getString("latestAction", null);
+        String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");
+        BatteryManager bm = (BatteryManager) this.getSystemService(BATTERY_SERVICE);
+        assert bm != null;
+        int percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        reffDevices = FirebaseDatabase.getInstance().getReference().child("Devices Status").child(tabletName);
+        deviceManager.setNom_tablet(tabletName);
+        deviceManager.setID_tablet(idDevice);
+        deviceManager.setUltima_Accion(latestAction);
+        deviceManager.setApp_status(status);
+        deviceManager.setLast_check(timeDisplay());
+        deviceManager.setBattery_lvl(percentage);
+        deviceManager.setDevice_charger(batteryConnected);
+        CheckingBattery(percentage);
 
 
+        reffDevices.setValue(deviceManager);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        changeStatus("Aplicación Abierta");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        changeStatus("Aplicación Pausada");
+
+    }
+
+    public void CheckingBattery(int battPercentage) {
+        if (battPercentage <= 30) {
+            reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
+            batteryWarnings.setBattery_lvl(battPercentage);
+            batteryWarnings.setId_tablet(idDevice);
+            batteryWarnings.setLast_check(timeDisplay());
+            batteryWarnings.setNom_tablet(tabletName);
+            batteryWarnings.setWarning_type("Low Battery");
+            reffDevicesWar.setValue(batteryWarnings);
+        } else {
+            reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
+            reffDevicesWar.setValue(null);
+        }
+    }
+/*
+Ni idea de como hacerlo funcionar aún
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = this.getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
+        String user = prefs.getString("ActiveUser","def");
+        int drawableResourceId = this.getResources().getIdentifier(user, "drawable", this.getPackageName());
+        imageView.setImageResource(drawableResourceId);
+    }*/
+
+    public static void setImageView() {
+        imageView.setImageResource(R.drawable.ic_person_black_24dp);
+        headerText.setText(prefs.getString("ActiveUser","def"));
+        subheaderText.setText(String.format("%s@gmail.com", prefs.getString("ActiveUser", "def").toLowerCase()));
     }
 
     @Override
@@ -70,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
 
     }
-// ########### old
+
+
+    // ########### old
     private BroadcastReceiver LowBatteryReceiver = new BroadcastReceiver() {
         @SuppressLint("MissingPermission")
         @Override

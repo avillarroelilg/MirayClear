@@ -1,4 +1,4 @@
-package com.example.newentryclear.ui.share;
+package com.example.newentryclear.ui.hexadecimalgen;
 
 import android.os.Bundle;
 import android.util.Log;

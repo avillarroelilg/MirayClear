@@ -1,4 +1,4 @@
-package com.example.newentryclear.ui.gallery;
+package com.example.newentryclear.ui.login;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.newentryclear.MainActivity;
 import com.example.newentryclear.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,22 +27,23 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class GalleryFragment extends Fragment {
+public class LoginFragment extends Fragment {
     EditText nombre, contrasenya;
     Button signIn;
     ImageView userImage;
     DatabaseReference reff;
-    String passwordDB = "" , usercheck;
+    String passwordDB = "", usercheck;
     boolean correctUser = false;
     boolean correctPassword = false;
-    List<String> userList=new ArrayList<String>();
-    private GalleryViewModel galleryViewModel;
+    List<String> userList = new ArrayList<String>();
+    private LoginViewModel loginViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
+        loginViewModel =
+                ViewModelProviders.of(this).get(LoginViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
         nombre = root.findViewById(R.id.edit_username);
         userImage = root.findViewById(R.id.imageView);
@@ -57,13 +59,13 @@ public class GalleryFragment extends Fragment {
         reff = FirebaseDatabase.getInstance().getReference().child("Usuarios");
         usercheck = reff.getKey();
 
-        DatabaseReference mDatabase= FirebaseDatabase.getInstance().getReference().child("Usuarios");
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("Usuarios");
 
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snap:dataSnapshot.getChildren()){
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     userList.add(snap.getKey());
                 }
             }
@@ -78,21 +80,27 @@ public class GalleryFragment extends Fragment {
             public void onClick(View v) {
 
 
-                for (String s : userList){
-                    if (s.equals(nombre.getText().toString())){
+                for (String s : userList) {
+                    if (s.equals(nombre.getText().toString())) {
                         correctUser = true;
                     }
                 }
-                if (!correctUser){
-                    Toast.makeText(getContext(), "Nombre de usuario incorrecto", Toast.LENGTH_LONG).show();
+                if (!correctUser) {
+                    Toast.makeText(getContext(), "Nombre de usuario inexistente", Toast.LENGTH_LONG).show();
                 } else {
                     reff.child(nombre.getText().toString()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            passwordDB = dataSnapshot.child("password").getValue().toString();
-                            if (passwordDB.equals(contrasenya.getText().toString())){
-                                Toast.makeText(getContext(), "Log-in completado !", Toast.LENGTH_LONG).show();
+                            passwordDB = Objects.requireNonNull(dataSnapshot.child("password").getValue()).toString();
 
+                            if (passwordDB.equals(contrasenya.getText().toString())) {
+                                Toast.makeText(getContext(), "Log-In completado !", Toast.LENGTH_LONG).show();
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("ActiveUser", nombre.getText().toString());
+                                editor.apply();
+                                nombre.getText().clear();
+                                contrasenya.getText().clear();
+                                MainActivity.setImageView();
                             } else {
                                 Toast.makeText(getContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
                             }

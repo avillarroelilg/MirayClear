@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.example.newentryclear.ui.gallery.GalleryFragment"
+        android:name="com.example.newentryclear.ui.login.LoginFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/nav_share"
-        android:name="com.example.newentryclear.ui.share.ShareFragment"
+        android:name="com.example.newentryclear.ui.hexadecimalgen.HexaFragment"
         android:label="@string/menu_share"
         tools:layout="@layout/fragment_share" />
 

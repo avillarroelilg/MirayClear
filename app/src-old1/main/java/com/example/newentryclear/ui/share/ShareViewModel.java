@@ -1,4 +1,4 @@
-package com.example.newentryclear.ui.share;
+package com.example.newentryclear.ui.hexadecimalgen;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

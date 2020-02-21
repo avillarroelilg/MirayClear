@@ -1,9 +1,7 @@
-package com.example.newentryclear.ui.share;
+package com.example.newentryclear.ui.hexadecimalgen;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,17 +19,17 @@ import com.example.newentryclear.R;
 
 import java.util.Random;
 
-public class ShareFragment extends Fragment implements View.OnClickListener {
+public class HexaFragment extends Fragment implements View.OnClickListener {
     TextView cajaHex;
-    private ShareViewModel shareViewModel;
+    private HexaViewModel hexaViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        shareViewModel =
-                ViewModelProviders.of(this).get(ShareViewModel.class);
+        hexaViewModel =
+                ViewModelProviders.of(this).get(HexaViewModel.class);
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         final TextView textView = root.findViewById(R.id.text_share);
-        shareViewModel.getText().observe(this, new Observer<String>() {
+        hexaViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

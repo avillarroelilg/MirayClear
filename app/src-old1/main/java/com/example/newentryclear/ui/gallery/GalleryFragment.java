@@ -1,4 +1,4 @@
-package com.example.newentryclear.ui.gallery;
+package com.example.newentryclear.ui.login;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

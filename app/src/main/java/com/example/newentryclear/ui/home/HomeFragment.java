@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
 
-        changeStatus("Aplicación Pausada");
+        changeStatus("Aplicación Abierta");
 
     }
 
