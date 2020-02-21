@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void setImageView() {
+     public static void setImageView() {
         imageView.setBackgroundResource(R.drawable.ic_person_black_24dp);
     }
 
