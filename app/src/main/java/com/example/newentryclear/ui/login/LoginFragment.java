@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.newentryclear.MainActivity;
 import com.example.newentryclear.R;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +33,7 @@ import java.util.Objects;
 
 public class LoginFragment extends Fragment {
     EditText nombre, contrasenya;
-    Button signIn;
+    Button signIn,signOut;
     ImageView userImage;
     DatabaseReference reff;
     String passwordDB = "", usercheck;
@@ -39,18 +41,24 @@ public class LoginFragment extends Fragment {
     boolean correctPassword = false;
     List<String> userList = new ArrayList<String>();
     private LoginViewModel loginViewModel;
+    NavigationView navigationView;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         loginViewModel =
                 ViewModelProviders.of(this).get(LoginViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+       // View main = inflater.inflate(R.layout.content_main, container, false);
         nombre = root.findViewById(R.id.edit_username);
         userImage = root.findViewById(R.id.imageView);
-
-
+       // navigationView = main.findViewById(R.id.nav_view);
+        navigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_view);
         contrasenya = root.findViewById(R.id.edit_passwordUser);
         signIn = root.findViewById(R.id.btn_logIn);
+        signOut = root.findViewById(R.id.btn_logOut);
+        signOut.setEnabled(false);
 
         SharedPreferences prefs = getContext().getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -98,9 +106,18 @@ public class LoginFragment extends Fragment {
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putString("ActiveUser", nombre.getText().toString());
                                 editor.apply();
-                                nombre.getText().clear();
-                                contrasenya.getText().clear();
+                             //   nombre.getText().clear();
+                             //   contrasenya.getText().clear();
                                 MainActivity.setImageView();
+                                prefs.edit().putString("loggedIn", "logged").apply();
+                                Menu menu = navigationView.getMenu();
+                                menu.findItem(R.id.nav_home).setVisible(true);
+                                menu.findItem(R.id.nav_send).setVisible(true);
+                                menu.findItem(R.id.nav_share).setVisible(true);
+                                menu.findItem(R.id.nav_tools).setVisible(true);
+                                signIn.setEnabled(false);
+                                signOut.setEnabled(true);
+
                             } else {
                                 Toast.makeText(getContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
                             }
@@ -115,6 +132,28 @@ public class LoginFragment extends Fragment {
                     //userImage.setImageResource(R.drawable.ic_person_black_24dp);
 
                 }
+            }
+        });
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("ActiveUser","No Usuario");
+                editor.apply();
+                MainActivity.removeImageView();
+                nombre.getText().clear();
+                   contrasenya.getText().clear();
+                prefs.edit().putString("loggedIn", "logged").apply();
+                Menu menu = navigationView.getMenu();
+                menu.findItem(R.id.nav_home).setVisible(false);
+                menu.findItem(R.id.nav_send).setVisible(false);
+                menu.findItem(R.id.nav_share).setVisible(false);
+                menu.findItem(R.id.nav_tools).setVisible(false);
+                signIn.setEnabled(true);
+                signOut.setEnabled(false);
+                Toast.makeText(getContext(), "User logged out", Toast.LENGTH_LONG).show();
+
             }
         });
         return root;

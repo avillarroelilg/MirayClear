@@ -58,10 +58,13 @@ public class MainActivity extends AppCompatActivity {
     AlarmasMedic alarmasMedic;
     DeviceManager deviceManager;
     BatteryWarnings batteryWarnings;
+    NavigationView navigationView;
+
 
     String tabletName;
     String username;
     String idDevice;
+    Integer logComplete;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         headerText = (TextView) header.findViewById(R.id.navHeader);
         subheaderText = (TextView) header.findViewById(R.id.navHeaderSub);
         prefs = this.getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
+        prefs.edit().putString("loggedIn", "notLogged").apply();
 
     }
 
@@ -137,8 +141,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         changeStatus("Aplicación Abierta");
+        Menu menu = navigationView.getMenu();
+        SharedPreferences prefs = this.getSharedPreferences(
+                "com.example.newentry", Context.MODE_PRIVATE);
+        String user = prefs.getString("loggedIn","notLogged");
+        if (user.equals("notLogged")){
+            menu.findItem(R.id.nav_home).setVisible(false);
+            menu.findItem(R.id.nav_send).setVisible(false);
+            menu.findItem(R.id.nav_share).setVisible(false);
+            menu.findItem(R.id.nav_tools).setVisible(false);
+        } else {
+            menu.findItem(R.id.nav_home).setVisible(true);
+            menu.findItem(R.id.nav_send).setVisible(true);
+            menu.findItem(R.id.nav_share).setVisible(true);
+            menu.findItem(R.id.nav_tools).setVisible(true);
+        }
     }
 
     @Override
@@ -179,6 +197,11 @@ Ni idea de como hacerlo funcionar aún
         imageView.setImageResource(R.drawable.ic_person_black_24dp);
         headerText.setText(prefs.getString("ActiveUser","def"));
         subheaderText.setText(String.format("%s@gmail.com", prefs.getString("ActiveUser", "def").toLowerCase()));
+    }
+    public static void removeImageView() {
+        imageView.setImageResource(R.mipmap.ic_launcher);
+        headerText.setText(prefs.getString("ActiveUser","def"));
+        subheaderText.setText("");
     }
 
     @Override
