@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) header.findViewById(R.id.imageLog);
 // #####
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, 
+                R.id.nav_gallery,  R.id.nav_home,
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
 
     }
+
 // ########### old
     private BroadcastReceiver LowBatteryReceiver = new BroadcastReceiver() {
         @SuppressLint("MissingPermission")

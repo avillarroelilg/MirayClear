@@ -2,7 +2,7 @@ package com.example.newentryclear;
 
 public class BatteryWarnings {
     private String warning_type;
-    private Integer id_tablet;
+    private String id_tablet;
     private String nom_tablet;
     private Integer battery_lvl;
     private String last_check;
@@ -11,11 +11,11 @@ public class BatteryWarnings {
 
     }
 
-    public Integer getId_tablet() {
+    public String getId_tablet() {
         return id_tablet;
     }
 
-    public void setId_tablet(Integer id_tablet) {
+    public void setId_tablet(String id_tablet) {
         this.id_tablet = id_tablet;
     }
 

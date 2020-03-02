@@ -86,7 +86,7 @@ public class PlugInControlReceiver extends BroadcastReceiver {
             prefs.edit().putString("latestAction","Shutdown").apply();
 
             deviceManager.setNom_tablet("TabletB1");
-            deviceManager.setID_tablet(8089);
+            deviceManager.setID_tablet("8089");
             deviceManager.setUltima_Accion("Shutdown");
             deviceManager.setApp_status("Dispositivo apagado");
            // deviceManager.setLast_check(timeDisplay());
@@ -100,7 +100,7 @@ public class PlugInControlReceiver extends BroadcastReceiver {
             prefs.edit().putString("latestAction","Reboot").apply();
 
             deviceManager.setNom_tablet("TabletB1");
-            deviceManager.setID_tablet(8089);
+            deviceManager.setID_tablet("8089");
             deviceManager.setUltima_Accion("Reboot");
             deviceManager.setApp_status("Dispositivo apagado");
             //deviceManager.setLast_check(timeDisplay());

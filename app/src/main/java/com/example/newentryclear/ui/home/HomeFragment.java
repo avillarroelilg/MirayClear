@@ -3,6 +3,7 @@ package com.example.newentryclear.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -10,10 +11,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -25,13 +22,13 @@ import com.example.newentryclear.DeviceManager;
 import com.example.newentryclear.MainActivity;
 import com.example.newentryclear.MyService;
 import com.example.newentryclear.R;
+import com.example.newentryclear.webdb;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.annotations.Nullable;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import static androidx.core.content.ContextCompat.getSystemService;
+import static android.content.Context.BATTERY_SERVICE;
+import static com.example.newentryclear.UtilityClass.isPlugged;
 import static com.example.newentryclear.UtilityClass.timeDisplay;
 import static com.example.newentryclear.UtilityClass.timeDisplayDay;
 import static com.example.newentryclear.UtilityClass.timeDisplayHours;
@@ -39,6 +36,19 @@ import static com.example.newentryclear.UtilityClass.timeDisplayHours;
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private HomeViewModel homeViewModel;
+
+    DatabaseReference reff;
+    DatabaseReference reffDevices;
+    DatabaseReference reffDevicesWar;
+
+    AlarmasMedic alarmasMedic;
+    DeviceManager deviceManager;
+    BatteryWarnings batteryWarnings;
+
+    String tabletName;
+    String username;
+    String idDevice;
+    private Object webdb;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,32 +62,62 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         return root;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        alarmasMedic = new AlarmasMedic();
+        deviceManager = new DeviceManager();
+        batteryWarnings = new BatteryWarnings();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        changeStatus("Aplicación Abierta");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        changeStatus("Aplicación Pausada");
+
+    }
 //ssssss
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_red:
-                getActivity().startService(new Intent(getActivity(), MyService.class));
+                //getActivity().startService(new Intent(getActivity(), MyService.class));
+
+                //funciona sendWwarningToFirebase("warning_rojo");
                 Log.i("click", "el boton red funciona");
-                //sendWwarningToFirebase("warning_rojo");
 
                 break;
             case R.id.btn_blue:
-                getActivity().stopService(new Intent(getActivity(), MyService.class));
+                //getActivity().stopService(new Intent(getActivity(), MyService.class));
+
+                //funciona sendWwarningToFirebase("warning_azul");
                 Log.i("click", "el boton blue funciona");
-                //sendWwarningToFirebase("warning_azul");
                 break;
 
             case R.id.btn_green:
 
+                //sendWwarningToFirebase("warning_verde"); //funciona
+
+                webdb ghhh= new webdb();
+                ghhh.reaad_db("read","34");
+
                 Log.i("click", "el boton  green funciona");
-                //sendWwarningToFirebase("warning_verde");
                 break;
 
             case R.id.btn_yellow:
 
+                //funciona sendWwarningToFirebase("warning_amarillo");
                 Log.i("click", "el boton yellow funciona");
-                //sendWwarningToFirebase("warning_amarillo");
                 break;
 
 
@@ -86,27 +126,61 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    DatabaseReference reff;
-    DatabaseReference reffDevices;
-    DatabaseReference reffDevicesWar;
+    public void CheckingBattery(int battPercentage) {
+        if (battPercentage <= 30) {
+            reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
+            batteryWarnings.setBattery_lvl(battPercentage);
+            batteryWarnings.setId_tablet(idDevice);
+            batteryWarnings.setLast_check(timeDisplay());
+            batteryWarnings.setNom_tablet(tabletName);
+            batteryWarnings.setWarning_type("Low Battery");
+            reffDevicesWar.setValue(batteryWarnings);
+        } else {
+            reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
+            reffDevicesWar.setValue(null);
+        }
+    }
+    public void changeStatus(String status) {
+        SharedPreferences prefs = getContext().getSharedPreferences(
+                "com.example.newentryclear", Context.MODE_PRIVATE);
+        if (isPlugged(getContext())) {
+            prefs.edit().putString("chargerConnected", "Conectado").apply();
+        } else if (!isPlugged(getContext())) {
+            prefs.edit().putString("chargerConnected", "Desconectado").apply();
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        tabletName = sharedPreferences.getString("tabletName", "Adrian");
+        idDevice = sharedPreferences.getString("tabletID", "0");
 
-    AlarmasMedic alarmasMedic;
-    DeviceManager deviceManager;
-    BatteryWarnings batteryWarnings;
+        String latestAction = sharedPreferences.getString("latestAction", null);
+        String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");
+        BatteryManager bm = (BatteryManager) getActivity().getSystemService(BATTERY_SERVICE);
+        int percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-    String tabletName;
-    Integer idDevice;
+        reffDevices = FirebaseDatabase.getInstance().getReference().child("Devices Status").child(tabletName);
+        deviceManager.setNom_tablet(tabletName);
+        deviceManager.setID_tablet(idDevice);
+        deviceManager.setUltima_Accion(latestAction);
+        deviceManager.setApp_status(status);
+        deviceManager.setLast_check(timeDisplay());
+        deviceManager.setBattery_lvl(percentage);
+        deviceManager.setDevice_charger(batteryConnected);
+        CheckingBattery(percentage);
+
+
+        reffDevices.setValue(deviceManager);
+    }
 
     private void sendWwarningToFirebase(String typeOfWarning) {
 
-        SharedPreferences prefs = getContext().getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("com.example.newentryclear", Context.MODE_PRIVATE);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String database = sharedPreferences.getString("name_db", "Database");
         int actualBattery = prefs.getInt("percentageBattery", -1);
         String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");
-        tabletName = sharedPreferences.getString("tabletName", "Tablet B1");
-        idDevice = Integer.valueOf(sharedPreferences.getString("tabletID", "0"));
-
+        tabletName = sharedPreferences.getString("tabletName", "Tablet 10");
+        idDevice = sharedPreferences.getString("tabletID", "0");
+        username = sharedPreferences.getString("user_name", "menda");
         reff = FirebaseDatabase.getInstance().getReference().child(database).child(timeDisplayDay()).child("Log " + timeDisplayHours());
 
         //crea objeto alarma medica
@@ -114,15 +188,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         alarmasMedic.setID_tablet(idDevice);
         alarmasMedic.setTipo_Alarma(typeOfWarning);
         alarmasMedic.setTime(timeDisplay());
+        alarmasMedic.setNom_user(username);
 
         //crea objeto device manager
         deviceManager.setDevice_charger(batteryConnected);
         deviceManager.setLast_check(timeDisplay());
+        deviceManager.setApp_status("Aplicación Abierta");
         //stopLockTask();
 
         reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
         reffDevicesWar.setValue(null);
 
+        BatteryManager bm = (BatteryManager) getActivity().getSystemService(BATTERY_SERVICE);
+        int percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        CheckingBattery(percentage);
+
+        reffDevices = FirebaseDatabase.getInstance().getReference().child("Devices Status").child(tabletName);
+
         reffDevices.setValue(deviceManager);
+        reff.setValue(alarmasMedic);
     }
 }

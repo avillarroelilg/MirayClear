@@ -65,7 +65,7 @@ public class deviceWarningService extends Service {
         private BatteryWarnings batteryWarnings;
 
         private String tabletName;
-        private Integer idDevice;
+        private String idDevice;
 
         @Override
         protected void onPreExecute() {
@@ -84,7 +84,7 @@ public class deviceWarningService extends Service {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
             tabletName = sharedPreferences.getString("tabletName", "Tablet B1");
-            idDevice = Integer.valueOf(sharedPreferences.getString("tabletID", "0"));
+            idDevice = sharedPreferences.getString("tabletID", "0");
 
             String latestAction = sharedPreferences.getString("latestAction", null);
             String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");

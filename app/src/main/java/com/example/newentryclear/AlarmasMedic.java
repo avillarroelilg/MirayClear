@@ -2,7 +2,7 @@ package com.example.newentryclear;
 
 public class AlarmasMedic {
     private String Nom_tablet;
-    private Integer ID_tablet;
+    private String ID_tablet;
     private String Tipo_Alarma;
     private String Nom_user;
     private String password_user;
@@ -20,11 +20,11 @@ public class AlarmasMedic {
         this.Nom_tablet = nom_tablet;
     }
 
-    public Integer getID_tablet() {
+    public String getID_tablet() {
         return ID_tablet;
     }
 
-    public void setID_tablet(Integer ID_tablet) {
+    public void setID_tablet(String ID_tablet) {
         this.ID_tablet = ID_tablet;
     }
 
