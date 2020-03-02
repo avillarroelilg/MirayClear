@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class LoginFragment extends Fragment {
     EditText nombre, contrasenya;
-    Button signIn,signOut;
+    Button signIn, signOut;
     ImageView userImage;
     DatabaseReference reff;
     String passwordDB = "", usercheck;
@@ -50,15 +50,14 @@ public class LoginFragment extends Fragment {
         loginViewModel =
                 ViewModelProviders.of(this).get(LoginViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-       // View main = inflater.inflate(R.layout.content_main, container, false);
+        // View main = inflater.inflate(R.layout.content_main, container, false);
         nombre = root.findViewById(R.id.edit_username);
         userImage = root.findViewById(R.id.imageView);
-       // navigationView = main.findViewById(R.id.nav_view);
+        // navigationView = main.findViewById(R.id.nav_view);
         navigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_view);
         contrasenya = root.findViewById(R.id.edit_passwordUser);
         signIn = root.findViewById(R.id.btn_logIn);
         signOut = root.findViewById(R.id.btn_logOut);
-        signOut.setEnabled(false);
 
         SharedPreferences prefs = getContext().getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -69,6 +68,13 @@ public class LoginFragment extends Fragment {
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("Usuarios");
 
+        if (prefs.getString("loggedIn","notLogged").equals("notLogged")){
+            signIn.setEnabled(true);
+            signOut.setEnabled(false);
+        } else {
+            signIn.setEnabled(false);
+            signOut.setEnabled(true);
+        }
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -106,8 +112,8 @@ public class LoginFragment extends Fragment {
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putString("ActiveUser", nombre.getText().toString());
                                 editor.apply();
-                             //   nombre.getText().clear();
-                             //   contrasenya.getText().clear();
+                                //   nombre.getText().clear();
+                                //   contrasenya.getText().clear();
                                 MainActivity.setImageView();
                                 prefs.edit().putString("loggedIn", "logged").apply();
                                 Menu menu = navigationView.getMenu();
@@ -139,11 +145,11 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("ActiveUser","No Usuario");
+                editor.putString("ActiveUser", "No Usuario");
                 editor.apply();
                 MainActivity.removeImageView();
                 nombre.getText().clear();
-                   contrasenya.getText().clear();
+                contrasenya.getText().clear();
                 prefs.edit().putString("loggedIn", "logged").apply();
                 Menu menu = navigationView.getMenu();
                 menu.findItem(R.id.nav_home).setVisible(false);

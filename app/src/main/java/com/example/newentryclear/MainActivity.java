@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.newentryclear.ui.hexadecimalgen.HexaFragment;
@@ -16,6 +17,7 @@ import com.example.newentryclear.ui.home.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.view.View;
 
@@ -27,6 +29,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     BatteryWarnings batteryWarnings;
     NavigationView navigationView;
 
+    Context context;
+
 
     String tabletName;
     String username;
@@ -79,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         deviceManager = new DeviceManager();
         batteryWarnings = new BatteryWarnings();
 
-//batery and fix screem
+//batery and fix screen
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         registerReceiver(LowBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
 // #####
@@ -104,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = this.getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
         prefs.edit().putString("loggedIn", "notLogged").apply();
 
+        context = this;
     }
 
     public void changeStatus(String status) {
@@ -167,6 +173,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // If the screen is off then the device has been locked
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        boolean isScreenOn;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            isScreenOn = powerManager.isInteractive();
+        } else {
+            isScreenOn = powerManager.isScreenOn();
+        }
+        if (!isScreenOn) {
+
+            ProcessPhoenix.triggerRebirth(context);
+
+        }
+    }
+
     public void CheckingBattery(int battPercentage) {
         if (battPercentage <= 30) {
             reffDevicesWar = FirebaseDatabase.getInstance().getReference().child("Other Warnings").child(tabletName);
@@ -181,17 +206,7 @@ public class MainActivity extends AppCompatActivity {
             reffDevicesWar.setValue(null);
         }
     }
-/*
-Ni idea de como hacerlo funcionar aún
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences prefs = this.getSharedPreferences("com.example.newentry", Context.MODE_PRIVATE);
-        String user = prefs.getString("ActiveUser","def");
-        int drawableResourceId = this.getResources().getIdentifier(user, "drawable", this.getPackageName());
-        imageView.setImageResource(drawableResourceId);
-    }*/
 
     public static void setImageView() {
         imageView.setImageResource(R.drawable.ic_person_black_24dp);
@@ -223,4 +238,7 @@ Ni idea de como hacerlo funcionar aún
             startActivity(intent1);
         }
     };
+
+    public void lockEscape(View view) {
+    }
 }
