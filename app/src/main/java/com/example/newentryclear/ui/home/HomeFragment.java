@@ -32,6 +32,7 @@ import static com.example.newentryclear.UtilityClass.isPlugged;
 import static com.example.newentryclear.UtilityClass.timeDisplay;
 import static com.example.newentryclear.UtilityClass.timeDisplayDay;
 import static com.example.newentryclear.UtilityClass.timeDisplayHours;
+import static java.lang.String.valueOf;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -89,37 +90,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //ssssss
     @Override
     public void onClick(View v) {
+        webdb db_action= new webdb();
         switch (v.getId()) {
             case R.id.btn_red:
                 //getActivity().startService(new Intent(getActivity(), MyService.class));
-
                 //funciona sendWwarningToFirebase("warning_rojo");
-                Log.i("click", "el boton red funciona");
-
+                db_action.create_entry("red",idDevice,tabletName);
                 break;
+
             case R.id.btn_blue:
                 //getActivity().stopService(new Intent(getActivity(), MyService.class));
-
                 //funciona sendWwarningToFirebase("warning_azul");
-                Log.i("click", "el boton blue funciona");
+                db_action.update_entry("blue",idDevice,tabletName);
                 break;
 
             case R.id.btn_green:
-
                 //sendWwarningToFirebase("warning_verde"); //funciona
-
-                webdb ghhh= new webdb();
-                ghhh.reaad_db("read","34");
-
-                Log.i("click", "el boton  green funciona");
+                db_action.update_entry("green",idDevice,tabletName);
                 break;
 
             case R.id.btn_yellow:
-
                 //funciona sendWwarningToFirebase("warning_amarillo");
+                db_action.create_entry("amarillo",idDevice,tabletName);
                 Log.i("click", "el boton yellow funciona");
                 break;
-
 
             default:
                 Log.i("click", "somos los powerangers !! ;)");
@@ -150,10 +144,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         tabletName = sharedPreferences.getString("tabletName", "Adrian");
-        idDevice = sharedPreferences.getString("tabletID", "0");
+        idDevice = sharedPreferences.getString("tabletID", "00c");
 
         String latestAction = sharedPreferences.getString("latestAction", null);
         String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");
+
         BatteryManager bm = (BatteryManager) getActivity().getSystemService(BATTERY_SERVICE);
         int percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
@@ -181,6 +176,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         tabletName = sharedPreferences.getString("tabletName", "Tablet 10");
         idDevice = sharedPreferences.getString("tabletID", "0");
         username = sharedPreferences.getString("user_name", "menda");
+
         reff = FirebaseDatabase.getInstance().getReference().child(database).child(timeDisplayDay()).child("Log " + timeDisplayHours());
 
         //crea objeto alarma medica
