@@ -49,18 +49,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     String tabletName;
     String username;
     String idDevice;
-    private Object webdb;
-
+    webdb db_action;
+    SharedPreferences sharedPreferences;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         root.findViewById(R.id.btn_blue).setOnClickListener(this::onClick);
         root.findViewById(R.id.btn_green).setOnClickListener(this::onClick);
         root.findViewById(R.id.btn_yellow).setOnClickListener(this::onClick);
         root.findViewById(R.id.btn_red).setOnClickListener(this::onClick);
 
+        db_action.pruebas(getContext());
         return root;
     }
 
@@ -71,6 +71,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         alarmasMedic = new AlarmasMedic();
         deviceManager = new DeviceManager();
         batteryWarnings = new BatteryWarnings();
+        db_action = new webdb();
     }
 
     @Override
@@ -78,6 +79,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         changeStatus("Aplicación Abierta");
+        db_action.create_entry_d("onStart");
+
     }
 
     @Override
@@ -85,34 +88,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onStop();
 
         changeStatus("Aplicación Pausada");
+        db_action.update_entry_d("onStop");
 
     }
-//ssssss
+
+    //ssssss
     @Override
     public void onClick(View v) {
-        webdb db_action= new webdb();
+
         switch (v.getId()) {
             case R.id.btn_red:
                 //getActivity().startService(new Intent(getActivity(), MyService.class));
                 //funciona sendWwarningToFirebase("warning_rojo");
-                db_action.create_entry("red",idDevice,tabletName);
+                db_action.create_entry("red");
                 break;
 
             case R.id.btn_blue:
                 //getActivity().stopService(new Intent(getActivity(), MyService.class));
                 //funciona sendWwarningToFirebase("warning_azul");
-                db_action.update_entry("blue",idDevice,tabletName);
+                db_action.update_entry("blue");
                 break;
 
             case R.id.btn_green:
                 //sendWwarningToFirebase("warning_verde"); //funciona
-                db_action.update_entry("green",idDevice,tabletName);
+                db_action.update_entry("green");
                 break;
 
             case R.id.btn_yellow:
                 //funciona sendWwarningToFirebase("warning_amarillo");
-                db_action.create_entry("amarillo",idDevice,tabletName);
+                db_action.create_entry("amarillo");
                 Log.i("click", "el boton yellow funciona");
+
                 break;
 
             default:
@@ -142,7 +148,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         } else if (!isPlugged(getContext())) {
             prefs.edit().putString("chargerConnected", "Desconectado").apply();
         }
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         tabletName = sharedPreferences.getString("tabletName", "Adrian");
         idDevice = sharedPreferences.getString("tabletID", "00c");
 

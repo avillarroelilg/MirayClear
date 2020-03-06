@@ -2,6 +2,7 @@ package com.example.newentryclear;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -31,24 +32,52 @@ public class webdb extends AppCompatActivity {
 
     private static String ip = "192.168.10.131";
     //private static String ip = "10.0.2.2";
+    //com.example.newentryclear.MainActivity@9fcdbfe
+    SharedPreferences sharedPreferences,prefs;
+    private static String tabletName,id_device,status,latestAction,batteryConnected;
+    int percentage;
 
-    public void reaad_entry( String typeWarning,String idDevice,String tabletName){
-        servicioWeb("read",idDevice,tabletName,typeWarning,false);
+    public void pruebas(Context context){
+        //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+
+        sharedPreferences = context.getApplicationContext().getSharedPreferences(
+                "com.example.newentryclear", Context.MODE_PRIVATE);
+        prefs = context.getApplicationContext().getSharedPreferences(
+                "com.example.newentryclear", Context.MODE_PRIVATE);
+        tabletName = sharedPreferences.getString("tabletName", "Tablet 10");
+        id_device = sharedPreferences.getString("tabletID", "00c");
+        latestAction = sharedPreferences.getString("latestAction", null);
+        batteryConnected = sharedPreferences.getString("chargerConnected", "defaultStringIfNothingFound");
+
+        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
+        percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
     }
 
-    public void delete_entry( String typeWarning,String idDevice,String tabletName){
-        servicioWeb("delete",idDevice,tabletName,typeWarning,false);
+    public void reaad_entry( String typeWarning){
+        servicioWeb("read",typeWarning,false);
     }
 
-    public void create_entry(String typeWarning,String idDevice,String tabletName){
-        servicioWeb("create",idDevice,tabletName,typeWarning,false);
+    public void delete_entry( String typeWarning){
+        servicioWeb("delete",typeWarning,false);
     }
 
-    public void update_entry(String typeWarning,String idDevice,String tabletName){
-        servicioWeb("update",idDevice,tabletName,typeWarning,true);
+    public void create_entry(String typeWarning){
+        servicioWeb("create",typeWarning,false);
+    }
+    public void create_entry_d(String state){
+        status = state;
+        servicioWeb("createdevice","null",false);
+    }
+    public void update_entry_d(String state){
+        status = state;
+        servicioWeb("updatedevice","null",false);
+    }
+    public void update_entry(String typeWarning){
+        servicioWeb("update",typeWarning,true);
     }
 
-    private void servicioWeb(final String name_serv, String id_device, String name_device, String warning,Boolean attended) {
+    private void servicioWeb(final String name_serv, String warning,Boolean attended) {
 
         try {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -60,7 +89,7 @@ public class webdb extends AppCompatActivity {
 
             if (name_serv.equals("create")) {
                 urlBuilder.addQueryParameter("ID", id_device);
-                urlBuilder.addQueryParameter("Name", name_device);
+                urlBuilder.addQueryParameter("Name", tabletName);
                 urlBuilder.addQueryParameter("Warning", warning);
                 urlBuilder.addQueryParameter("Attended", valueOf(attended));
                 urlBuilder.addQueryParameter("TimeLog", timeDisplay());
@@ -68,15 +97,26 @@ public class webdb extends AppCompatActivity {
                 urlBuilder.addQueryParameter("ID", id_device);
             }else if(name_serv.equals("update")){
                 urlBuilder.addQueryParameter("ID", id_device);
-                urlBuilder.addQueryParameter("Name", name_device);
+                urlBuilder.addQueryParameter("Name", tabletName);
                 urlBuilder.addQueryParameter("Warning", warning);
                 urlBuilder.addQueryParameter("Attended", valueOf(attended));
                 urlBuilder.addQueryParameter("TimeLog", timeDisplay());
-                Log.i("response",timeDisplay());
-
             }else if(name_serv.equals("read")){
                 urlBuilder.addQueryParameter("ID", id_device);
+            }else if(name_serv.equals("createdevice")){
+                urlBuilder.addQueryParameter("ID", id_device);
+                urlBuilder.addQueryParameter("Name", tabletName);
+                urlBuilder.addQueryParameter("Status", status);//
+                urlBuilder.addQueryParameter("BTL", valueOf(percentage));//
+                urlBuilder.addQueryParameter("TimeLog", timeDisplay());
+            }else if(name_serv.equals("updatedevice")){
+                urlBuilder.addQueryParameter("ID", id_device);
+                urlBuilder.addQueryParameter("Name", tabletName);
+                urlBuilder.addQueryParameter("Status", status);//
+                urlBuilder.addQueryParameter("BTL", valueOf(percentage));//
+                urlBuilder.addQueryParameter("TimeLog", timeDisplay());
             }
+
 
             String url = urlBuilder.build().toString();
 
@@ -115,14 +155,11 @@ public class webdb extends AppCompatActivity {
                                         res2 = jsonObject.getString("diviceName");
                                         res3 = jsonObject.getString("typeWarning");
                                         res4 = jsonObject.getString("attended");
-
-                                        //Toast.makeText(getBaseContext(), res1+", "+res2+", "+res3, Toast.LENGTH_SHORT).show();
                                         Log.i("response",res1+", "+res2+", "+res3+", "+res4);
                                     } catch (JSONException e) {
                                         Log.e("Json ERROR",e.getMessage());
                                     }
                                 }
-
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -133,6 +170,5 @@ public class webdb extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

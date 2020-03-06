@@ -44,11 +44,22 @@ Button sigIn;
             @Override
             public void onClick(View v) {
                 Log.d("sig In","boton logIn click");
-
                  MainActivity.setImageView();
             }
         });
 
         return root;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //##########
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //##########
     }
 }
