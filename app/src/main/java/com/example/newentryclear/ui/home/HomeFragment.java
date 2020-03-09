@@ -180,7 +180,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         int actualBattery = prefs.getInt("percentageBattery", -1);
         String batteryConnected = prefs.getString("chargerConnected", "defaultStringIfNothingFound");
         tabletName = sharedPreferences.getString("tabletName", "Tablet 10");
-        idDevice = sharedPreferences.getString("tabletID", "0");
+        idDevice = sharedPreferences.getString("tabletID", "007");
         username = sharedPreferences.getString("user_name", "menda");
 
         reff = FirebaseDatabase.getInstance().getReference().child(database).child(timeDisplayDay()).child("Log " + timeDisplayHours());

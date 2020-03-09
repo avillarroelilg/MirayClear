@@ -39,9 +39,6 @@ public class webdb extends AppCompatActivity {
 
     public void pruebas(Context context){
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-
-        //sharedPreferences = context.getApplicationContext().getSharedPreferences(
-         //       "com.example.newentryclear", Context.MODE_PRIVATE);
         prefs = context.getApplicationContext().getSharedPreferences(
                 "com.example.newentryclear", Context.MODE_PRIVATE);
         tabletName = sharedPreferences.getString("tabletName", "Tablet 10");
@@ -54,7 +51,7 @@ public class webdb extends AppCompatActivity {
 
     }
 
-    public void reaad_entry( String typeWarning){
+    public void read_entry( String typeWarning){
         servicioWeb("read",typeWarning,false);
     }
 
