@@ -22,11 +22,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.newentryclear.MainActivity;
 import com.example.newentryclear.R;
+import com.example.newentryclear.webdb;
 
 public class GalleryFragment extends Fragment {
 EditText nombre,contasenya;
 Button sigIn;
-
+    webdb db_action;
 
     private GalleryViewModel galleryViewModel;
 
@@ -45,8 +46,12 @@ Button sigIn;
             public void onClick(View v) {
                 Log.d("sig In","boton logIn click");
                  MainActivity.setImageView();
+
             }
         });
+
+        db_action = new webdb();
+        db_action.pruebas(getContext());
 
         return root;
     }
@@ -54,6 +59,7 @@ Button sigIn;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //##########
     }
 
@@ -61,5 +67,6 @@ Button sigIn;
     public void onStart() {
         super.onStart();
         //##########
+        //db_action.create_entry_d("onStart");
     }
 }

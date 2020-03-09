@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     public static ImageView imageView;
+
     webdb db_action;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +68,33 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        Context context = this;
+
+        db_action = new webdb();
+        Context context = getApplicationContext();
         db_action.pruebas(context);
 
     }
 
      public static void setImageView() {
         imageView.setBackgroundResource(R.drawable.ic_person_black_24dp);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        db_action.create_entry_d("onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        db_action.update_entry_d("onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db_action.update_entry_d("onDestroy");
     }
 
     @Override

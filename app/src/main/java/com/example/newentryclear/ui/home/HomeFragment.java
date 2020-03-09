@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         changeStatus("Aplicación Abierta");
-        db_action.create_entry_d("onStart");
+        //db_action.create_entry_d("onStart");
 
     }
 
@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onStop();
 
         changeStatus("Aplicación Pausada");
-        db_action.update_entry_d("onStop");
+        //db_action.update_entry_d("onStop");
 
     }
 
