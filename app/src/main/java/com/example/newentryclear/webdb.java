@@ -60,7 +60,7 @@ public class webdb extends AppCompatActivity {
     }
 
     public void create_entry(String typeWarning){
-        servicioWeb("create",typeWarning,false);
+        servicioWeb("create1",typeWarning,false);
     }
     public void create_entry_d(String state){
         status = state;
@@ -112,6 +112,10 @@ public class webdb extends AppCompatActivity {
                 urlBuilder.addQueryParameter("Status", status);//
                 urlBuilder.addQueryParameter("BTL", valueOf(percentage));//
                 urlBuilder.addQueryParameter("TimeLog", timeDisplay());
+            }else if(name_serv.equals("create1")){
+                urlBuilder.addQueryParameter("ID", id_device);
+                urlBuilder.addQueryParameter("Warning", warning);
+
             }
 
             String url = urlBuilder.build().toString();

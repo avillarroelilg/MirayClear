@@ -66,6 +66,7 @@ public class ShareFragment extends Fragment implements View.OnClickListener {
         int myRandomNumber = rand.nextInt(0xfff) + 0xfff; // Generates a random number between 0x10 and 0x20
         //System.out.printf("%x\n",myRandomNumber); // Prints it in hex, such as "0x14" or....
         String result = Integer.toHexString(myRandomNumber); // Random hex number in result
+        result=result.toUpperCase();
         cajaHex.setText(result);
 
         SharedPreferences sharedPref  = PreferenceManager.getDefaultSharedPreferences(getContext());

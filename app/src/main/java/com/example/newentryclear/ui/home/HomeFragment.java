@@ -98,27 +98,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         switch (v.getId()) {
             case R.id.btn_red:
-                //getActivity().startService(new Intent(getActivity(), MyService.class));
+
                 //funciona sendWwarningToFirebase("warning_rojo");
-                db_action.create_entry("red");
+                db_action.create_entry("13");
                 break;
 
             case R.id.btn_blue:
-                //getActivity().stopService(new Intent(getActivity(), MyService.class));
+
                 //funciona sendWwarningToFirebase("warning_azul");
-                db_action.update_entry("blue");
+                db_action.create_entry("04");
                 break;
 
             case R.id.btn_green:
                 //sendWwarningToFirebase("warning_verde"); //funciona
-                db_action.update_entry("green");
+                db_action.create_entry("02");
                 break;
 
             case R.id.btn_yellow:
                 //funciona sendWwarningToFirebase("warning_amarillo");
-                db_action.create_entry("amarillo");
-                Log.i("click", "el boton yellow funciona");
-
+                db_action.create_entry("06");
                 break;
 
             default:
